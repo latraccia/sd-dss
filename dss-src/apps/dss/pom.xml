@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<artifactId>dss</artifactId>
+		<groupId>eu.europa.ec.joinup.sd-dss</groupId>
+		<version>3.0.2</version>
+		<relativePath>../..</relativePath>
+	</parent>
+	<name>Organisational pom for the DSS application modules (core, webservices, demo)</name>
+	<artifactId>app-dss</artifactId>
+	<packaging>pom</packaging>
+
+	<modules>
+		<module>core</module>
+    <module>integration/dss-webservices</module>
+    <module>demo</module>
+	</modules>
+</project>

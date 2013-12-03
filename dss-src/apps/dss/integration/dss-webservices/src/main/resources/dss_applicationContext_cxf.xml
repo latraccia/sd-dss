@@ -1,0 +1,56 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:jaxws="http://cxf.apache.org/jaxws"
+       xsi:schemaLocation="
+		http://www.springframework.org/schema/beans 
+		http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+		http://cxf.apache.org/jaxws http://cxf.apache.org/schemas/jaxws.xsd">
+
+    <import resource="classpath:META-INF/cxf/cxf.xml"/>
+    <import resource="classpath:META-INF/cxf/cxf-extension-soap.xml"/>
+    <import resource="classpath:META-INF/cxf/cxf-servlet.xml"/>
+
+    <!-- SIGNATURE SERVICE -->
+    <!-- temporary deleted for the compatibility reasons
+
+        <bean id="dss.signing.signatureservice" class="eu.europa.ec.markt.dss.ws.impl.SignatureServiceImpl">
+            <property name="cadesService" ref="cadesService"/>
+            <property name="xadesService" ref="xadesService"/>
+            <property name="padesService" ref="padesService"/>
+        </bean>
+
+        <bean id="cadesService" class="eu.europa.ec.markt.dss.signature.cades.CAdESService">
+            <property name="certificateVerifier" ref="CertificateVerifier"/>
+            <property name="tspSource" ref="tspSource"/>
+        </bean>
+
+        <bean id="xadesService" class="eu.europa.ec.markt.dss.signature.xades.XAdESService">
+            <property name="certificateVerifier" ref="CertificateVerifier"/>
+            <property name="tspSource" ref="tspSource"/>
+        </bean>
+
+        <bean id="padesService" class="eu.europa.ec.markt.dss.signature.pades.PAdESServiceV2">
+            <property name="certificateVerifier" ref="CertificateVerifier"/>
+            <property name="tspSource" ref="tspSource"/>
+        </bean>
+
+        <jaxws:endpoint id="signatureService" implementor="#dss.signing.signatureservice" address="/signatureService"/>
+
+    -->
+
+    <!-- VALIDATION SERVICE -->
+    <bean id="dss.validation.validationservice" class="eu.europa.ec.markt.dss.ws.impl.ValidationServiceImpl">
+        <property name="certificateVerifier" ref="CertificateVerifier"/>
+    </bean>
+
+    <jaxws:endpoint id="validationService" implementor="#dss.validation.validationservice"
+                    address="/validationService">
+    </jaxws:endpoint>
+
+    <bean id="CertificateVerifier"
+          class="eu.europa.ec.markt.dss.validation.TrustedListCertificateVerifier">
+        <!-- <property name="trustedListCertificatesSource" ref="trustedListSource"/> temporary deleted for the compatibility reasons deleted for the -->
+        <property name="ocspSource" ref="ocspSource"/>
+        <property name="crlSource" ref="crlSource"/>
+    </bean>
+
+</beans>

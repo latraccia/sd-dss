@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+       http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.0.xsd">
+
+    <import resource="classpath:spring/applicationContext-dao.xml"/>
+
+    <context:annotation-config/>
+    <context:component-scan base-package="eu.europa.ec.markt.dss"/>
+
+    <bean id="proxyPreferenceManager" class="eu.europa.ec.markt.dss.manager.ProxyPreferenceManager">
+        <property name="proxyDao" ref="proxyDao"/>
+    </bean>
+
+    <bean id="httpDataLoader" class="eu.europa.ec.markt.dss.validation.https.CommonsHttpDataLoader">
+        <property name="proxyPreferenceManager" ref="proxyPreferenceManager"/>
+    </bean>
+
+    <bean id="cacheCrlSource" class="eu.europa.ec.markt.dss.validation.crl.OnlineCRLSource">
+        <property name="dataLoader" ref="httpDataLoader"/>
+    </bean>
+
+    <bean id="crlSource"
+          class="eu.europa.ec.markt.dss.validation.crl.JdbcCacheCRLSource">
+        <property name="cachedSource" ref="cacheCrlSource"/>
+        <property name="dataSource" ref="dataSource"/>
+    </bean>
+
+    <bean id="ocspSource" class="eu.europa.ec.markt.dss.validation.ocsp.OnlineOCSPSource">
+        <property name="httpDataLoader">
+            <bean class="eu.europa.ec.markt.dss.validation.https.CommonsHttpDataLoader">
+                <property name="contentType" value="application/ocsp-request"/>
+            </bean>
+        </property>
+    </bean>
+
+    <!-- Added to handle the new 102853 validation. The old validation uses the same service, a new converter was created: dss-service:
+         <code>eu.europa.ec.markt.dss.validation.certificate.RemoteCertificateSource</code>
+    -->
+    <bean id="trustedListSource"
+          class="eu.europa.ec.markt.dss.validation102853.tsl.ReloadableTrustedListCertificateSource">
+        <property name="dataLoader" ref="httpDataLoader"/>
+        <property name="checkSignature" value="false"/>
+        <property name="lotlCertificate" value="classpath://ec.europa.eu.crt"/>
+        <property name="lotlUrl"
+                  value="https://ec.europa.eu/information_society/policy/esignature/trusted-list/tl-mp.xml"/>
+    </bean>
+
+    <bean id="tspSource" class="eu.europa.ec.markt.dss.validation.tsp.OnlineTSPSource">
+        <property name="tspServer" value="http://tsa.belgium.be/connect"/>
+    </bean>
+
+</beans>

@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
+
+    <import resource="classpath:spring/applicationContext-core.xml"/>
+
+    <bean id="aiaCertificateRequestHandler"
+          class="eu.europa.ec.markt.dss.applet.service.AIACertificateRequestHandler">
+        <property name="aiaCertificateSourceFactory">
+            <bean
+                    class="eu.europa.ec.markt.dss.validation.certificate.AIACertificateFactoryImpl">
+                <property name="httpDataLoader" ref="httpDataLoader"/>
+            </bean>
+        </property>
+    </bean>
+
+    <bean id="crlRequestHandler" class="eu.europa.ec.markt.dss.applet.service.CRLRequestHandler">
+        <property name="crlSource" ref="crlSource"/>
+    </bean>
+
+    <bean id="ocspRequestHandler"
+          class="eu.europa.ec.markt.dss.applet.service.OCSPRequestHandler">
+        <property name="ocspSource" ref="ocspSource">
+        </property>
+    </bean>
+
+    <bean id="potentialIssuersRequestHandler"
+          class="eu.europa.ec.markt.dss.applet.service.PotentialIssuersRequestHandler">
+        <property name="certificateSource" ref="trustedListSource"/>
+    </bean>
+
+    <bean id="timestampRequestHandler"
+          class="eu.europa.ec.markt.dss.applet.service.TimestampRequestHandler">
+        <property name="tspSource" ref="tspSource"/>
+    </bean>
+
+</beans>
